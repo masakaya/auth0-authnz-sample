@@ -109,7 +109,7 @@ android {
 
     // Stated rather than assumed: the module has no Java sources, only Kotlin ones.
     sourceSets {
-        getByName("main") { kotlin.srcDir("src/main/kotlin") }
+        getByName("main") { kotlin.directories.add("src/main/kotlin") }
     }
 }
 
