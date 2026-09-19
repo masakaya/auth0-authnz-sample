@@ -1,0 +1,23 @@
+# Development-only customer ledger database backing LedgerAuthorityResolver
+# (app.auth.authority-source=ledger). Data lives on tmpfs, not a named volume, so the
+# container never persists anything to disk: `docker compose down -v` (or a plain `down`,
+# since there is no volume to remove) always returns to an empty database. The credentials
+# below are throwaway development defaults, not secrets.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: authnz
+      POSTGRES_USER: authnz
+      POSTGRES_PASSWORD: authnz
+    ports:
+      # Host port 54329 (not the default 5432) so this never collides with a Postgres
+      # instance already running on the host.
+      - "54329:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authnz -d authnz"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
