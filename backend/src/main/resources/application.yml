@@ -5,8 +5,28 @@ app:
     audience: ${AUTH0_AUDIENCE:https://api.example.com}
     claim-namespace: https://authnz.example.com
     known-brands: brand-a,brand-b
-    # "claims" reads authorities from token claims. "ledger" is reserved for a follow-up
-    # change and is not implemented yet.
+    # "claims" reads authorities from token claims (default). "ledger" instead looks them up
+    # in the customer ledger database below (see compose.yaml and LedgerAuthorityResolver).
     authority-source: claims
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:4200,http://10.0.2.2:4200}
+
+# Only used when app.auth.authority-source=ledger. Defaults match compose.yaml; override
+# with DB_URL / DB_USER / DB_PASSWORD for a different database. The pool is intentionally
+# lazy (initialization-fail-timeout: -1) so that startup never requires the database to be
+# reachable -- with the default "claims" authority source this datasource is configured but
+# never used, and the app and its tests must work even when the ledger container is down.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:54329/authnz}
+    username: ${DB_USER:authnz}
+    password: ${DB_PASSWORD:authnz}
+    hikari:
+      initialization-fail-timeout: -1
+  # Migrations are applied explicitly (./gradlew :backend:flywayMigrate, or the Flyway CLI
+  # container), never automatically at application startup. flyway-core is not even on the
+  # application's own runtime classpath (see backend/build.gradle.kts), so Flyway's
+  # autoconfiguration never activates in the first place; this flag just makes that
+  # intent explicit in case flyway-core is ever added as an application dependency.
+  flyway:
+    enabled: false

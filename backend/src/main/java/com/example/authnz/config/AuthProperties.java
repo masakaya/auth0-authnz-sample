@@ -17,9 +17,10 @@ public record AuthProperties(
 
     /**
      * Where {@link com.example.authnz.security.AuthorityResolver} implementations read
-     * authority information from. Only {@link #CLAIMS} is implemented today; {@link #LEDGER}
-     * is reserved for a follow-up change that resolves authorities against the customer
-     * ledger instead of trusting token claims directly.
+     * authority information from. {@link #CLAIMS} trusts the token's own claims; {@link
+     * #LEDGER} instead looks up the customer ledger by the token's {@code sub} (see {@link
+     * com.example.authnz.security.LedgerAuthorityResolver}), which also requires the ledger
+     * database described in {@code compose.yaml} and the Flyway migrations.
      */
     public enum AuthorityResolutionSource {
         CLAIMS,
