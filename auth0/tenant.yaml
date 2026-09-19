@@ -1,0 +1,146 @@
+# Auth0 tenant configuration for the sample, applied with the Auth0 Deploy CLI:
+#   npm run import   (see README.md in this directory)
+#
+# Tenant-specific values are injected from AUTH0_KEYWORD_REPLACE_MAPPINGS in config.json
+# (or from environment variables of the same name). The keywords used below are
+# AUTH0_DOMAIN, API_AUDIENCE, CLAIM_NAMESPACE, SPA_ORIGIN, ANDROID_PACKAGE_NAME and
+# ANDROID_SHA256_FINGERPRINT.
+#
+# config.json limits the Deploy CLI to the resource types in this file and keeps deletion
+# disabled, so resources that are not listed here are left untouched.
+
+resourceServers:
+  - name: authnz-sample-api
+    identifier: '##API_AUDIENCE##'
+    signing_alg: RS256
+    # RBAC: the permissions of the user's roles are added to the access token as the
+    # "permissions" claim, which the backend maps to granted authorities.
+    enforce_policies: true
+    token_dialect: access_token_authz
+    # Short-lived access tokens (the Auth0 default is 86400 seconds). A changed brand
+    # membership or customer role only reaches the API when a new token is issued.
+    token_lifetime: 900
+    token_lifetime_for_web: 900
+    # Needed for the native app and the SPA to receive refresh tokens.
+    allow_offline_access: true
+    skip_consent_for_verifiable_first_party_clients: true
+    scopes:
+      - value: 'read:admin'
+        description: Call the admin sample endpoint
+
+clients:
+  - name: authnz-sample-spa
+    app_type: spa
+    is_first_party: true
+    oidc_conformant: true
+    token_endpoint_auth_method: none
+    grant_types:
+      - authorization_code
+      - refresh_token
+    callbacks:
+      - '##SPA_ORIGIN##'
+    allowed_logout_urls:
+      - '##SPA_ORIGIN##'
+    web_origins:
+      - '##SPA_ORIGIN##'
+    jwt_configuration:
+      alg: RS256
+    refresh_token:
+      rotation_type: rotating
+      expiration_type: expiring
+      leeway: 0
+      token_lifetime: 2592000
+      idle_token_lifetime: 1296000
+      infinite_token_lifetime: false
+      infinite_idle_token_lifetime: false
+
+  # One application per OS: callbacks, device settings, refresh token policy and
+  # revocation are all scoped to the application. Add iOS / Windows applications
+  # next to this one; the API, permissions and roles stay shared.
+  - name: authnz-sample-android
+    app_type: native
+    is_first_party: true
+    oidc_conformant: true
+    token_endpoint_auth_method: none
+    grant_types:
+      - authorization_code
+      - refresh_token
+    # https callbacks (Android App Links). Auth0 serves the assetlinks.json for the
+    # package name and certificate fingerprint below.
+    callbacks:
+      - 'https://##AUTH0_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
+    allowed_logout_urls:
+      - 'https://##AUTH0_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
+    mobile:
+      android:
+        app_package_name: '##ANDROID_PACKAGE_NAME##'
+        sha256_cert_fingerprints:
+          - '##ANDROID_SHA256_FINGERPRINT##'
+    jwt_configuration:
+      alg: RS256
+    refresh_token:
+      rotation_type: rotating
+      expiration_type: expiring
+      leeway: 0
+      token_lifetime: 2592000
+      idle_token_lifetime: 1296000
+      infinite_token_lifetime: false
+      infinite_idle_token_lifetime: false
+
+databases:
+  # A dedicated connection, so that enabling passkeys does not change the tenant's
+  # default "Username-Password-Authentication" connection.
+  - name: authnz-sample-users
+    strategy: auth0
+    enabled_clients:
+      - authnz-sample-spa
+      - authnz-sample-android
+    options:
+      # Passkeys need the email as the identifier (no separate username).
+      attributes:
+        email:
+          identifier:
+            active: true
+          profile_required: true
+          signup:
+            status: required
+      authentication_methods:
+        password:
+          enabled: true
+        passkey:
+          enabled: true
+      passkey_options:
+        challenge_ui: both
+        progressive_enrollment_enabled: true
+        local_enrollment_enabled: true
+      brute_force_protection: true
+
+roles:
+  - name: authnz-sample-admin
+    description: Can call the admin sample endpoint
+    permissions:
+      - permission_name: 'read:admin'
+        resource_server_identifier: '##API_AUDIENCE##'
+
+actions:
+  - name: add-customer-claims
+    code: ./actions/add-customer-claims/code.js
+    dependencies: []
+    deployed: true
+    secrets:
+      - name: CLAIM_NAMESPACE
+        value: '##CLAIM_NAMESPACE##'
+    supported_triggers:
+      - id: post-login
+        version: v3
+
+# Note: this replaces the whole post-login flow of the tenant with the list below.
+triggers:
+  post-login:
+    - action_name: add-customer-claims
+      display_name: add-customer-claims
+
+prompts:
+  # Passkeys require the New Universal Login with the Identifier First profile.
+  universal_login_experience: new
+  identifier_first: true
