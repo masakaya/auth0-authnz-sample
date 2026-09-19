@@ -1,0 +1,12 @@
+app:
+  auth:
+    # Trailing slash matters: it must match the "iss" claim on issued tokens exactly.
+    issuer: ${AUTH0_ISSUER:https://example.auth0.com/}
+    audience: ${AUTH0_AUDIENCE:https://api.example.com}
+    claim-namespace: https://authnz.example.com
+    known-brands: brand-a,brand-b
+    # "claims" reads authorities from token claims. "ledger" is reserved for a follow-up
+    # change and is not implemented yet.
+    authority-source: claims
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:4200,http://10.0.2.2:4200}
