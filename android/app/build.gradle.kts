@@ -31,6 +31,42 @@ val auth0Scheme = setting("auth0.scheme", "AUTH0_SCHEME", "https")
 // Where the WebView points. On a device, `adb reverse tcp:4200 tcp:4200` makes localhost reachable.
 val webAppUrl = setting("webApp.url", "WEB_APP_URL", "http://localhost:4200")
 
+/*
+ * A release build must never point the WebView at a plain http origin: the access token the bridge
+ * hands over would then cross the network in the clear, and the debug-only network security
+ * configuration that permits cleartext is not part of a release build anyway.
+ *
+ * The check is stated twice on purpose. Asking for a release build by name fails right away during
+ * configuration, and the release outputs also depend on a task that fails, which covers the
+ * aggregate tasks that reach a release output without naming it.
+ */
+val webAppUrlIsSecure = webAppUrl.startsWith("https://")
+val insecureWebAppUrlMessage =
+    "webApp.url must be https in a release build, but it is \"$webAppUrl\". " +
+        "Set webApp.url in android/local.properties, as -PwebApp.url=... or as WEB_APP_URL."
+
+if (!webAppUrlIsSecure) {
+    val releaseRequested = gradle.startParameter.taskNames.any { requested ->
+        val name = requested.substringAfterLast(':')
+        name.startsWith("assembleRelease") ||
+            name.startsWith("bundleRelease") ||
+            name.startsWith("installRelease")
+    }
+    if (releaseRequested) throw GradleException(insecureWebAppUrlMessage)
+}
+
+val verifyReleaseWebAppUrl = tasks.register("verifyReleaseWebAppUrl") {
+    group = "verification"
+    description = "Fails when a release build would point the WebView at a plain http origin."
+    doLast {
+        if (!webAppUrlIsSecure) throw GradleException(insecureWebAppUrlMessage)
+    }
+}
+
+tasks.matching { it.name == "assembleRelease" || it.name == "bundleRelease" }.configureEach {
+    dependsOn(verifyReleaseWebAppUrl)
+}
+
 android {
     namespace = "com.example.authnz.app"
     compileSdk {

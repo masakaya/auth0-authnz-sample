@@ -1,0 +1,29 @@
+# Copy to android/local.properties and fill in. That file is not committed.
+#
+# The same values can be passed as Gradle properties (-Pauth0.domain=...) or through the
+# environment (AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_AUDIENCE, AUTH0_SCHEME, WEB_APP_URL).
+# Every one of them has a placeholder default, so a debug build succeeds with none of them set -
+# it just cannot sign in.
+#
+# local.properties is also where the Android SDK location goes (sdk.dir), which is why the root
+# build treats the presence of this file as "an SDK is configured".
+
+# sdk.dir=/home/you/Android/Sdk
+
+# The tenant domain, without a scheme.
+auth0.domain=example.auth0.com
+
+# The client id of the native application.
+auth0.clientId=
+
+# The API identifier. Asking for it is what makes the access token a JWT for the API.
+auth0.audience=https://api.example.com
+
+# Scheme of the sign-in callback. Keep this at https: the callback is then an Android App Link,
+# which another application cannot claim. The callback URL to register is
+#   https://<auth0.domain>/android/<applicationId>/callback
+auth0.scheme=https
+
+# Where the WebView points. On a device, run `adb reverse tcp:4200 tcp:4200` first.
+# A release build refuses to assemble while this is http.
+webApp.url=http://localhost:4200
