@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+
+    <!-- Everything stays on https by default, exactly as in a release build. -->
+    <base-config cleartextTrafficPermitted="false" />
+
+    <!--
+      The development server is reached over the loopback: localhost on a device with
+      `adb reverse tcp:4200 tcp:4200`, and 10.0.2.2 from an emulator. Nothing else may be
+      plain http, not even during development.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+
+</network-security-config>
