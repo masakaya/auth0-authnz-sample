@@ -17,7 +17,9 @@
     - `frame-src` is needed for the identity provider's silent authentication iframe.
     - `frame-ancestors` is intentionally absent: it is ignored in a meta tag and must be
       sent as an HTTP response header by whatever serves the production bundle.
-    - A custom identity provider domain has to be added to `connect-src` and `frame-src`.
+    - A custom identity provider domain must not be committed here: the `local` configuration
+      serves src/index.local.html, which scripts/make-local-index.mjs generates with the domain
+      from environment.local.ts added to `connect-src` and `frame-src`.
     - The production build sets `optimization.styles.inlineCritical` to false in
       angular.json: that optimization emits an inline `onload` handler on the stylesheet
       link, which `script-src 'self'` rejects.

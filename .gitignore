@@ -42,6 +42,7 @@ dist/
 local.properties
 application-local.yml
 environment.local.ts
+index.local.html
 auth0/config.json
 .env
 .env.*
