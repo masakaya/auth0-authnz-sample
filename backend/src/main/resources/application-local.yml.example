@@ -1,0 +1,7 @@
+# Copy this file to application-local.yml (already gitignored) and fill in your own
+# tenant values, then run with --spring.profiles.active=local. Alternatively, export
+# AUTH0_ISSUER / AUTH0_AUDIENCE / APP_CORS_ALLOWED_ORIGINS and skip this file entirely.
+app:
+  auth:
+    issuer: https://YOUR_TENANT.auth0.com/
+    audience: https://your-api-identifier
