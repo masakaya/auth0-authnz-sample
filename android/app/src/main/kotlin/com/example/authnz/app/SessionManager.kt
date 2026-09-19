@@ -182,8 +182,9 @@ class SessionManager(private val activity: FragmentActivity) {
 
                 override fun onFailure(error: CredentialsManagerException) {
                     // A key that the system invalidated - a new fingerprint was enrolled, the screen
-                    // lock was removed - leaves credentials that can never be decrypted again. They
-                    // are thrown away here so that the next attempt is a clean sign-in.
+                    // lock was removed - leaves credentials that can never be decrypted again. The
+                    // library already drops them in that case; this also clears the cached token so
+                    // that the next attempt is a clean sign-in.
                     if (error.invalidatesStoredCredentials()) discardCredentials()
                     onResult(TokenOutcome.Denied(error.toBridgeErrorCode(), error.message))
                 }
@@ -251,10 +252,11 @@ internal fun CredentialsManagerException.toBridgeErrorCode(): BridgeErrorCode = 
 }
 
 /**
- * True when the stored credentials can no longer be decrypted and should be destroyed: the key was
- * invalidated by a change to the device's biometrics or screen lock, or the ciphertext is unusable.
+ * True when the stored credentials can no longer be turned back into a session and should be
+ * destroyed: the key was invalidated by a change to the device's biometrics or screen lock, or what
+ * was stored cannot be read back. A biometric that simply did not match is not one of these - the
+ * credentials are still good and the person can try again.
  */
 internal fun CredentialsManagerException.invalidatesStoredCredentials(): Boolean =
-    this == CredentialsManagerException.BIOMETRICS_INVALID_USER ||
-        this == CredentialsManagerException.INVALID_CREDENTIALS ||
-        this == CredentialsManagerException.CRYPTO_EXCEPTION
+    this == CredentialsManagerException.CRYPTO_EXCEPTION ||
+        this == CredentialsManagerException.INVALID_CREDENTIALS
