@@ -3,7 +3,7 @@
 #
 # Tenant-specific values are injected from AUTH0_KEYWORD_REPLACE_MAPPINGS in config.json
 # (or from environment variables of the same name). The keywords used below are
-# AUTH0_DOMAIN, API_AUDIENCE, CLAIM_NAMESPACE, SPA_ORIGIN, ANDROID_PACKAGE_NAME and
+# LOGIN_DOMAIN, API_AUDIENCE, CLAIM_NAMESPACE, SPA_ORIGIN, ANDROID_PACKAGE_NAME and
 # ANDROID_SHA256_FINGERPRINT.
 #
 # config.json limits the Deploy CLI to the resource types in this file and keeps deletion
@@ -68,9 +68,9 @@ clients:
     # https callbacks (Android App Links). Auth0 serves the assetlinks.json for the
     # package name and certificate fingerprint below.
     callbacks:
-      - 'https://##AUTH0_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
+      - 'https://##LOGIN_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
     allowed_logout_urls:
-      - 'https://##AUTH0_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
+      - 'https://##LOGIN_DOMAIN##/android/##ANDROID_PACKAGE_NAME##/callback'
     mobile:
       android:
         app_package_name: '##ANDROID_PACKAGE_NAME##'

@@ -12,7 +12,7 @@
     "prompts"
   ],
   "AUTH0_KEYWORD_REPLACE_MAPPINGS": {
-    "AUTH0_DOMAIN": "your-tenant.us.auth0.com",
+    "LOGIN_DOMAIN": "login.example.com",
     "API_AUDIENCE": "https://api.example.com",
     "CLAIM_NAMESPACE": "https://authnz.example.com",
     "SPA_ORIGIN": "http://localhost:4200",
