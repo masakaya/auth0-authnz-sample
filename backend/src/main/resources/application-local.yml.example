@@ -6,7 +6,7 @@ app:
     issuer: https://YOUR_TENANT.auth0.com/
     audience: https://your-api-identifier
     # Uncomment to try app.auth.authority-source: ledger locally (needs `docker compose up
-    # -d` and the migrations applied; see the backend README).
+    # -d` and the migrations applied; see the README at the repository root).
     # authority-source: ledger
 
 # Only needed if your local ledger database differs from compose.yaml's defaults.

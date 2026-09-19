@@ -53,7 +53,7 @@ npm run import
 | `API_AUDIENCE` | API の Identifier。backend の `AUTH0_AUDIENCE` と同じ値 | `https://api.example.com` |
 | `CLAIM_NAMESPACE` | カスタムクレームの名前空間。backend の `app.auth.claim-namespace` と同じ値(末尾スラッシュなし) | `https://authnz.example.com` |
 | `SPA_ORIGIN` | Angular のオリジン | `http://localhost:4200` |
-| `ANDROID_PACKAGE_NAME` | Android アプリの applicationId | `com.example.authnz` |
+| `ANDROID_PACKAGE_NAME` | Android アプリの applicationId | `com.example.authnz.app` |
 | `ANDROID_SHA256_FINGERPRINT` | APK の署名証明書の SHA-256(`keytool -list -v -keystore <keystore>` で表示) | `AA:BB:...` |
 
 注意点:
