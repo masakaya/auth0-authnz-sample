@@ -16,6 +16,6 @@ export const environment: EnvironmentConfig = {
     // Client ID of the Single Page Application registered in the tenant.
     clientId: 'your-client-id',
     // API identifier of the legacy API stand-in, as registered in the tenant.
-    audience: 'https://api.example.test/legacy',
+    audience: 'https://api.example.com',
   },
 };

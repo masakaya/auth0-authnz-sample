@@ -12,6 +12,6 @@ export const environment: EnvironmentConfig = {
   auth0: {
     domain: 'your-tenant.example.auth0.com',
     clientId: 'REPLACE_WITH_YOUR_CLIENT_ID',
-    audience: 'https://api.example.test/legacy',
+    audience: 'https://api.example.com',
   },
 };
