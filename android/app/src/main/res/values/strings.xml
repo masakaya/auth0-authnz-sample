@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Authnz Sample</string>
+
+    <string name="action_log_in">Log in</string>
+    <string name="action_log_out">Log out</string>
+
+    <string name="status_signed_out">Not signed in.</string>
+    <string name="status_signed_in">Signed in.</string>
+    <string name="status_working">Working…</string>
+    <string name="status_not_configured">Auth0 is not configured. Fill in android/local.properties.</string>
+    <string name="status_login_failed">Sign-in failed.</string>
+    <string name="status_bad_web_app_url">The configured web application URL is not a usable origin.</string>
+
+    <string name="auth_prompt_title">Confirm it is you</string>
+    <string name="auth_prompt_description">Unlock the stored sign-in so the app can call the API.</string>
+</resources>
