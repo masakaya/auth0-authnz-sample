@@ -1,0 +1,34 @@
+name: auth0-actions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'auth0/**'
+      - '.github/workflows/auth0-actions.yml'
+  pull_request:
+    paths:
+      - 'auth0/**'
+      - '.github/workflows/auth0-actions.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auth0-actions-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: auth0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      # The unit tests only use node:test, so the Deploy CLI does not need to be installed.
+      - run: npm test
