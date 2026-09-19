@@ -1,0 +1,22 @@
+{
+  "AUTH0_DOMAIN": "your-tenant.us.auth0.com",
+  "AUTH0_CLIENT_ID": "client id of the Deploy CLI machine-to-machine application",
+  "AUTH0_ALLOW_DELETE": false,
+  "AUTH0_INCLUDED_ONLY": [
+    "resourceServers",
+    "clients",
+    "databases",
+    "roles",
+    "actions",
+    "triggers",
+    "prompts"
+  ],
+  "AUTH0_KEYWORD_REPLACE_MAPPINGS": {
+    "AUTH0_DOMAIN": "your-tenant.us.auth0.com",
+    "API_AUDIENCE": "https://api.example.com",
+    "CLAIM_NAMESPACE": "https://authnz.example.com",
+    "SPA_ORIGIN": "http://localhost:4200",
+    "ANDROID_PACKAGE_NAME": "com.example.authnz",
+    "ANDROID_SHA256_FINGERPRINT": "AA:BB:CC:... (SHA-256 of the signing certificate)"
+  }
+}
