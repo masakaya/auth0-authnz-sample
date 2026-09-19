@@ -1,0 +1,47 @@
+<section class="panel">
+  <h2>Session</h2>
+
+  <dl class="facts">
+    <dt>Token source</dt>
+    <dd>{{ tokenSource.kind }}</dd>
+    <dt>State</dt>
+    <dd>{{ loggedIn() ? 'signed in' : 'Guest, not signed in' }}</dd>
+  </dl>
+
+  @if (tokenSource.canLogin) {
+    @if (loggedIn()) {
+      <button type="button" (click)="logout()">Log out</button>
+    } @else {
+      <button type="button" (click)="login()">Log in</button>
+    }
+  } @else {
+    <p class="note">
+      The host application owns the session, so this screen offers no sign-in controls.
+    </p>
+  }
+</section>
+
+<section class="panel">
+  <h2>Endpoints</h2>
+
+  @for (endpoint of endpoints; track endpoint.id) {
+    @let result = results()[endpoint.id];
+
+    <article class="endpoint">
+      <div class="endpoint-head">
+        <code>{{ endpoint.method }} {{ endpoint.path }}</code>
+        <span class="requires">requires: {{ endpoint.requires }}</span>
+        <button type="button" (click)="call(endpoint)">Call</button>
+      </div>
+
+      @if (result) {
+        @if (result.pending) {
+          <p class="note">calling…</p>
+        } @else {
+          <p class="status">HTTP {{ result.status }}</p>
+          <pre>{{ result.body }}</pre>
+        }
+      }
+    </article>
+  }
+</section>

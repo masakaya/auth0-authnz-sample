@@ -1,0 +1,13 @@
+{
+  "name": "authnz-sample-auth0-config",
+  "private": true,
+  "description": "Auth0 tenant configuration (Auth0 Deploy CLI) and Actions for the sample",
+  "scripts": {
+    "test": "node --test \"actions/**/*.test.js\"",
+    "export": "a0deploy export --config_file config.json --format yaml --output_folder exported",
+    "import": "a0deploy import --config_file config.json --input_file tenant.yaml"
+  },
+  "devDependencies": {
+    "auth0-deploy-cli": "^9.0.0"
+  }
+}

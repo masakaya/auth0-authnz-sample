@@ -5,3 +5,14 @@ app:
   auth:
     issuer: https://YOUR_TENANT.auth0.com/
     audience: https://your-api-identifier
+    # Uncomment to try app.auth.authority-source: ledger locally (needs `docker compose up
+    # -d` and the migrations applied; see the backend README).
+    # authority-source: ledger
+
+# Only needed if your local ledger database differs from compose.yaml's defaults.
+# Otherwise prefer the DB_URL / DB_USER / DB_PASSWORD environment variables.
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://localhost:54329/authnz
+#     username: authnz
+#     password: authnz
