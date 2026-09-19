@@ -1,0 +1,21 @@
+import { EnvironmentConfig } from './environment-config';
+
+/**
+ * Copy this file to `environment.local.ts` and fill in your own tenant values.
+ * `environment.local.ts` is git-ignored and must never be committed.
+ *
+ *   cp src/environments/environment.local.ts.example src/environments/environment.local.ts
+ *   npm run start:local
+ */
+export const environment: EnvironmentConfig = {
+  production: false,
+  apiOrigin: 'http://localhost:8080',
+  auth0: {
+    // Tenant domain, for example `example.eu.auth0.com` or your own custom domain.
+    domain: 'your-tenant.eu.auth0.com',
+    // Client ID of the Single Page Application registered in the tenant.
+    clientId: 'your-client-id',
+    // API identifier of the legacy API stand-in, as registered in the tenant.
+    audience: 'https://api.example.test/legacy',
+  },
+};

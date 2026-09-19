@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Auth0 AuthN/AuthZ sample</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--
+    Content Security Policy.
+    - `style-src 'unsafe-inline'` is required because Angular injects component styles as
+      inline <style> elements, and a meta based policy cannot carry a per-response nonce.
+    - `connect-src` covers the API origin, the identity provider and, for `ng serve`, the
+      dev server websocket used for hot module replacement.
+    - `worker-src blob:` is needed by the identity provider SDK, which runs the refresh
+      token exchange inside a Web Worker created from a blob URL. It is scoped to workers
+      so that `script-src` itself stays at 'self'.
+    - `frame-src` is needed for the identity provider's silent authentication iframe.
+    - `frame-ancestors` is intentionally absent: it is ignored in a meta tag and must be
+      sent as an HTTP response header by whatever serves the production bundle.
+    - A custom identity provider domain has to be added to `connect-src` and `frame-src`.
+    - The production build sets `optimization.styles.inlineCritical` to false in
+      angular.json: that optimization emits an inline `onload` handler on the stylesheet
+      link, which `script-src 'self'` rejects.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:8080 https://*.auth0.com ws://localhost:4200; worker-src 'self' blob:; frame-src https://*.auth0.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
