@@ -8,7 +8,10 @@
     "build": "ng build",
     "build:local": "ng build --configuration local",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "prestart:local": "node scripts/make-local-index.mjs",
+    "prebuild:local": "node scripts/make-local-index.mjs",
+    "test:scripts": "node --test \"scripts/*.test.mjs\""
   },
   "private": true,
   "packageManager": "npm@10.9.8",

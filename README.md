@@ -47,7 +47,7 @@ auth0/                     Auth0 のテナント設定(Deploy CLI)、post-login 
 Auth0 のテナントに向けるときは、環境変数を設定してから起動します(または `backend/src/main/resources/application-local.yml.example` を `application-local.yml` にコピーして `--args='--spring.profiles.active=local'`)。
 
 ```bash
-export AUTH0_ISSUER='https://<テナントのドメイン>/'     # 末尾のスラッシュまで含める
+export AUTH0_ISSUER='https://<ログイン画面のドメイン>/'   # 末尾のスラッシュまで含める。カスタムドメインを使うならそれ
 export AUTH0_AUDIENCE='https://api.example.com'          # Auth0 に登録した API の Identifier
 ```
 
@@ -99,7 +99,7 @@ cd frontend
 npm ci
 npm test
 cp src/environments/environment.local.ts.example src/environments/environment.local.ts
-# environment.local.ts に Auth0 のドメイン、SPA の Client ID、audience を記入(コミットされません)
+# environment.local.ts に Auth0 のドメイン(カスタムドメインを使うならそれ)、SPA の Client ID、audience を記入(コミットされません)
 npm run start:local                  # http://localhost:4200
 ```
 
@@ -162,7 +162,7 @@ adb reverse tcp:8080 tcp:8080
 
 先に決めておくこと:
 
-- **カスタムドメインを使うかどうか。** パスキーはログイン画面のドメインに紐づくため、パスキーを有効にした後でカスタムドメインへ変えると、登録済みのパスキーがすべて使えなくなります。
+- **カスタムドメインを使うかどうか。** パスキーはログイン画面のドメインに紐づくため、パスキーを有効にした後でカスタムドメインへ変えると、登録済みのパスキーがすべて使えなくなります。使う場合は、テナント設定を反映する前にドメインの検証を済ませ、各アプリのドメインをすべてカスタムドメインに揃えます(手順と設定先の一覧は [`auth0/README.md`](auth0/README.md) の「カスタムドメインを使う場合」)。カスタムドメインそのものは、このリポジトリにコミットしません。
 - **契約プラン。** このサンプルは上位プラン限定の機能に依存しない構成にしていますが、RBAC と Application 数の上限はプランで確認してください。
 
 各アプリに設定する値(いずれもコミットしません):

@@ -34,13 +34,33 @@
    `read:clients` `create:clients` `update:clients` `read:client_keys` `read:resource_servers` `create:resource_servers` `update:resource_servers` `read:connections` `create:connections` `update:connections` `read:roles` `create:roles` `update:roles` `read:actions` `create:actions` `update:actions` `read:triggers` `update:triggers` `read:prompts` `update:prompts`
    (削除を無効にしているので `delete:*` は付けません。)
 
+### カスタムドメインを使う場合
+
+**`npm run import` より前に、カスタムドメインの設定と検証を済ませてください。** `tenant.yaml` はパスキーを有効にするので、順序が逆になると、テナント既定のドメインで登録されたパスキーがカスタムドメインへの切り替えで使えなくなります。
+
+1. Dashboard の Branding → Custom Domains でドメインを追加し、表示される CNAME を DNS に登録して検証する(証明書は Auth0 管理で構いません)。無料枠のテナントではクレジットカードの登録が必要です。
+2. ドメインの選び方: パスキーはこのドメインに紐づきます。Web とネイティブアプリで1つのパスキーを共用したい場合は、Auth0 の推奨どおりルートドメイン側に寄せた設計にします。あとから変えると登録済みのパスキーは使えなくなります。
+3. 以後、**アプリが使うドメインはすべてカスタムドメイン**にします。トークンの `iss` は、トークンを要求したときのドメインになるためです。
+
+| 設定先 | 値 |
+|---|---|
+| backend の `AUTH0_ISSUER` | `https://<カスタムドメイン>/`(末尾のスラッシュまで) |
+| frontend の `environment.local.ts` の `domain` | カスタムドメイン。`npm run start:local` / `build:local` が、このドメインを CSP に加えた `src/index.local.html`(コミットされません)を生成します |
+| android の `auth0.domain` | カスタムドメイン。コールバックは `https://<カスタムドメイン>/android/<applicationId>/callback` になり、App Links の検証ファイルも Auth0 がこのドメインで配信します |
+| `config.json` の `LOGIN_DOMAIN`(キーワード) | カスタムドメイン |
+| `config.json` の `AUTH0_DOMAIN` | **テナント本来のドメイン**(`xxx.auth0.com`)のまま。Deploy CLI が Management API を呼ぶ先なので、カスタムドメインにしません |
+| `auth0 test token` | `--domain <カスタムドメイン>` を付ける |
+
+カスタムドメインはお客様を特定できる値です。このリポジトリのファイルには書かず、上の表のコミットされない設定先にだけ入れてください。本番のバンドルを配信するときの CSP も、`frontend/src/index.html` を書き換えてコミットするのではなく、配信側の HTTP レスポンスヘッダで設定します。
+
 ## 2. Deploy CLI で設定を反映する
 
 ```bash
 cd auth0
 npm install
 cp config.json.example config.json      # config.json は .gitignore 済み
-# config.json の AUTH0_DOMAIN / AUTH0_CLIENT_ID と AUTH0_KEYWORD_REPLACE_MAPPINGS を埋める
+# config.json の AUTH0_DOMAIN(テナント本来のドメイン。カスタムドメインではない)/ AUTH0_CLIENT_ID と
+# AUTH0_KEYWORD_REPLACE_MAPPINGS を埋める
 export AUTH0_CLIENT_SECRET='...'         # Client Secret はファイルに書かず環境変数で渡す
 npm run import
 ```
@@ -49,7 +69,7 @@ npm run import
 
 | キー | 内容 | 例 |
 |---|---|---|
-| `AUTH0_DOMAIN` | テナントのドメイン(カスタムドメインを使うならそれ) | `your-tenant.us.auth0.com` |
+| `LOGIN_DOMAIN` | ログイン画面のドメイン。カスタムドメインを使うならそれ、使わないならテナントのドメイン | `login.example.com` |
 | `API_AUDIENCE` | API の Identifier。backend の `AUTH0_AUDIENCE` と同じ値 | `https://api.example.com` |
 | `CLAIM_NAMESPACE` | カスタムクレームの名前空間。backend の `app.auth.claim-namespace` と同じ値(末尾スラッシュなし) | `https://authnz.example.com` |
 | `SPA_ORIGIN` | Angular のオリジン | `http://localhost:4200` |
