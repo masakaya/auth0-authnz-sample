@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: #fff;
+  color: #1f2a37;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 1.5rem 1rem 3rem;
+}
