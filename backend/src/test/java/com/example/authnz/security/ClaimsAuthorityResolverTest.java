@@ -41,6 +41,27 @@ class ClaimsAuthorityResolverTest {
     }
 
     @Test
+    void ignoresKnownBrandWhoseIdCouldCollideWithAnotherRole() {
+        AuthProperties misconfigured = new AuthProperties(
+                "https://example.auth0.com/",
+                "https://api.example.com",
+                NAMESPACE,
+                List.of("brand-a", "role2", "guest"),
+                AuthorityResolutionSource.CLAIMS);
+        Jwt jwt = jwtWithClaims(Map.of(NAMESPACE + "/brands", List.of("brand-a", "role2", "guest")));
+
+        assertThat(authorityNames(new ClaimsAuthorityResolver(misconfigured).resolve(jwt)))
+                .containsExactly("ROLE_BRAND_A");
+    }
+
+    @Test
+    void ignoresPermissionThatPosesAsRole() {
+        Jwt jwt = jwtWithClaims(Map.of("permissions", List.of("read:admin", "ROLE_BRAND_A", "ROLE_ROLE2")));
+
+        assertThat(authorityNames(resolver.resolve(jwt))).containsExactly("read:admin");
+    }
+
+    @Test
     void ignoresUnknownBrand() {
         Jwt jwt = jwtWithClaims(Map.of(NAMESPACE + "/brands", List.of("brand-z")));
 

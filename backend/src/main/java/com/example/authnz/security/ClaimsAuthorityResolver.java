@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +41,8 @@ public class ClaimsAuthorityResolver implements AuthorityResolver {
     private static final String CUSTOMER_ROLE_CLAIM_SUFFIX = "/customer_role";
     private static final String ROLE1_CLAIM_VALUE = "role1";
     private static final String ROLE2_CLAIM_VALUE = "role2";
+    private static final String ROLE_PREFIX = "ROLE_";
+    private static final Pattern BRAND_ID_PATTERN = Pattern.compile("brand-[a-z0-9]+(-[a-z0-9]+)*");
 
     private final AuthProperties authProperties;
 
@@ -58,7 +61,10 @@ public class ClaimsAuthorityResolver implements AuthorityResolver {
 
     private void addPermissionAuthorities(Jwt jwt, Set<GrantedAuthority> authorities) {
         for (String permission : readStringList(jwt, PERMISSIONS_CLAIM)) {
-            authorities.add(new SimpleGrantedAuthority(permission));
+            // A permission must never be able to pose as a role (brand, customer role or guest).
+            if (!permission.startsWith(ROLE_PREFIX)) {
+                authorities.add(new SimpleGrantedAuthority(permission));
+            }
         }
     }
 
@@ -66,8 +72,10 @@ public class ClaimsAuthorityResolver implements AuthorityResolver {
         List<String> knownBrands = authProperties.knownBrands() == null ? List.of() : authProperties.knownBrands();
         String brandsClaim = authProperties.claimNamespace() + BRANDS_CLAIM_SUFFIX;
         for (String brand : readStringList(jwt, brandsClaim)) {
-            if (knownBrands.contains(brand)) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + toRoleSuffix(brand)));
+            // The id format is enforced so that a brand role always lives in the ROLE_BRAND_ namespace
+            // and a misconfigured known-brands entry such as "role2" cannot collide with another role.
+            if (knownBrands.contains(brand) && BRAND_ID_PATTERN.matcher(brand).matches()) {
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + toRoleSuffix(brand)));
             }
         }
     }
